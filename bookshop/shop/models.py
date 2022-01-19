@@ -21,12 +21,22 @@ class Author(models.Model):
     class Meta:
         app_label = 'shop'
 
+    def __str__(self):
+        s = self.first_name
+        if self.last_name:
+            s += f' {self.last_name}'
+
+        return s
+
 
 class Genre(models.Model):
     name = models.CharField('name', max_length=255, unique=True)
 
     class Meta:
         app_label = 'shop'
+
+    def __str__(self):
+        return self.name
 
 
 class CoverMaterial(models.TextChoices):
@@ -45,3 +55,6 @@ class Book(Product):
     cover_material = models.CharField(
         'cover material', max_length=20, choices=CoverMaterial.choices)
     image = models.ImageField('image', upload_to='books')
+
+    def __str__(self):
+        return f'{self.author} - {self.name}'
