@@ -1,14 +1,14 @@
 from django.db import models
+from polymorphic.models import PolymorphicModel
 
 
-class Product(models.Model):
+class Product(PolymorphicModel):
     name = models.CharField('name', max_length=255, default='')
     description = models.TextField('description', default='')
     appear_date = models.DateTimeField('appear date', auto_now_add=True)
     price = models.FloatField('price', default=0)
 
     class Meta:
-        abstract = True
         app_label = 'shop'
 
 
@@ -45,8 +45,6 @@ class CoverMaterial(models.TextChoices):
 
 
 class Book(Product):
-    name = models.CharField('name', max_length=255, default='')
-    description = models.TextField('description', default='')
     genre = models.ForeignKey(
         Genre, verbose_name='genre', on_delete=models.SET_NULL, null=True)
     author = models.ForeignKey(

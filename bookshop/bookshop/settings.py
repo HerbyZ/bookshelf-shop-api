@@ -33,15 +33,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'polymorphic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'accounts.apps.AccountsConfig',
     'shop.apps.ShopConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
