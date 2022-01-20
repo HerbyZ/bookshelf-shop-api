@@ -40,8 +40,8 @@ class Genre(models.Model):
 
 
 class CoverMaterial(models.TextChoices):
-    HARDCOVER = ('HC', 'hardcover')
-    PAPERBACK = ('PB', 'paperback')
+    HARDCOVER = 'hardcover'
+    PAPERBACK = 'paperback'
 
 
 class Book(Product):
