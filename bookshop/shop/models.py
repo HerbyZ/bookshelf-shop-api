@@ -52,6 +52,7 @@ class Book(Product):
     rating = models.FloatField('rating', default=0)
     cover_material = models.CharField(
         'cover material', max_length=20, choices=CoverMaterial.choices)
+    release_year = models.PositiveIntegerField('release year', null=True)
     image = models.ImageField('image', upload_to='books')
 
     def __str__(self):
