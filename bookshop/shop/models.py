@@ -56,3 +56,14 @@ class Book(Product):
 
     def __str__(self):
         return f'{self.author} - {self.name}'
+
+
+class Order(models.Model):
+    products = models.ManyToManyField(Product)
+    customer = models.ForeignKey(
+        'accounts.User', on_delete=models.CASCADE, default=0)
+    date = models.DateTimeField('date', auto_now_add=True)
+
+    def __str__(self):
+        date = self.date.strftime('%H:%M %d.%m.%Y')
+        return f"{self.customer} - {date}"
