@@ -58,10 +58,21 @@ class Book(Product):
         return f'{self.author} - {self.name}'
 
 
+class OrderStatus(models.TextChoices):
+    WAITING_FOR_PAYMENT = 'Waiting for payment'
+    DELIVERING = 'In deliver'
+    DELIVERED = 'Delivered'
+    CANCELED = 'Canceled'
+    RETURNED = 'Returned'
+
+
 class Order(models.Model):
     products = models.ManyToManyField(Product)
     customer = models.ForeignKey(
         'accounts.User', on_delete=models.CASCADE, default=0)
+    status = models.CharField(
+        'status', choices=OrderStatus.choices, max_length=25, default=OrderStatus.WAITING_FOR_PAYMENT)
+    address = models.CharField('address', max_length=255, default='')
     date = models.DateTimeField('date', auto_now_add=True)
 
     def __str__(self):
