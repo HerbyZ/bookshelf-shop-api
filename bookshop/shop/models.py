@@ -76,6 +76,28 @@ class Order(models.Model):
     address = models.CharField('address', max_length=255, default='')
     date = models.DateTimeField('date', auto_now_add=True)
 
+    def pay(self):
+        price = 0
+        for p in self.products:
+            price += p.price
+
+        sum_to_pay_by_bonuses = price / 2
+        if sum_to_pay_by_bonuses > self.customer.bonus_balance:
+            sum_to_pay_by_bonuses = self.customer.bonus_balance
+
+        sum_to_pay_by_balance = price - sum_to_pay_by_bonuses
+        if sum_to_pay_by_balance > self.customer.balance:
+            raise ValueError(
+                'There are not enough funds on your account to pay this order')
+
+        self.customer.bonus_balance -= sum_to_pay_by_bonuses
+        self.customer.balance -= sum_to_pay_by_balance
+
+        self.customer.save()
+
+        self.status = OrderStatus.DELIVERING
+        self.save()
+
     def __str__(self):
         date = self.date.strftime('%H:%M %d.%m.%Y')
         return f"{self.customer} - {date}"
