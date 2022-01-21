@@ -1,5 +1,6 @@
 from django.db import models
 
+from accounts.models import User
 from catalog.models import Product
 
 
@@ -45,3 +46,19 @@ class Order(models.Model):
     def __str__(self):
         date = self.date.strftime('%H:%M %d.%m.%Y')
         return f"{self.customer} - {date}"
+
+
+class CartProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField('amount', default=1)
+
+    def __str__(self):
+        return self.product.name
+
+
+class Cart(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    products = models.ManyToManyField(CartProduct)
+
+    def __str__(self):
+        return self.owner.email
