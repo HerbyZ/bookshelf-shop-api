@@ -59,4 +59,7 @@ class Cart(models.Model):
     products = models.ManyToManyField(CartProduct)
 
     def __str__(self):
-        return self.owner.email
+        if not self.user:
+            return f'Ownerless cart {self.id}'
+
+        return self.user.email
