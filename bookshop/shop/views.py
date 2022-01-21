@@ -7,8 +7,8 @@ from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from accounts.models import User
 from catalog.models import Product
 
-from .serializers import OrderSerializer
-from .models import Order, OrderStatus
+from .serializers import CartProductSerializer, CartSerializer, OrderSerializer
+from .models import Cart, CartProduct, Order, OrderStatus
 
 
 @api_view(['GET'])
@@ -85,3 +85,64 @@ def change_order_address(request, pk):
     serializer = OrderSerializer(order)
 
     return Response(serializer.data, 200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTTokenUserAuthentication])
+def add_product_to_cart(request):
+    product_id = request.data['product']
+    cart = get_object_or_404(Cart, owner=request.user)
+    product = get_object_or_404(Product, id=product_id)
+
+    for p in cart.products:
+        if p.product == product:
+            return Response({'detail': 'Product already in cart'}, 400)
+
+    cart.products.append(product)
+    cart.save()
+
+    serializer = CartSerializer(cart)
+
+    return Response(serializer.data, 201)
+
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTTokenUserAuthentication])
+def update_cart_product(request, pk):
+    cart_product = get_object_or_404(CartProduct, id=pk)
+
+    if cart_product.owner.id != request.user.id:
+        return Response({'detail': 'Access denied'}, 401)
+
+    serializer = CartProductSerializer(cart_product, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data, 200)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTTokenUserAuthentication])
+def remove_cart_product(request, pk):
+    cart_product = get_object_or_404(CartProduct, id=pk)
+
+    if cart_product.owner.id != request.user.id:
+        return Response({'detail': 'Access denied'}, 401)
+
+    cart_product.delete()
+    serializer = CartProductSerializer(cart_product)
+
+    return Response(serializer.data, 200)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTTokenUserAuthentication])
+def empty_cart(request):
+    for p in request.user.cart_set.products:
+        p.delete()
+
+    return Response({'detail': 'Success'}, 200)
