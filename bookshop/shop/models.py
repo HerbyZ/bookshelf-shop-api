@@ -1,6 +1,5 @@
 from django.db import models
 
-from accounts.models import User
 from catalog.models import Product
 
 
@@ -57,7 +56,6 @@ class CartProduct(models.Model):
 
 
 class Cart(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
     products = models.ManyToManyField(CartProduct)
 
     def __str__(self):

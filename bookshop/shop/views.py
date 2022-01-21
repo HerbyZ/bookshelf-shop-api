@@ -92,7 +92,7 @@ def change_order_address(request, pk):
 @authentication_classes([JWTTokenUserAuthentication])
 def add_product_to_cart(request):
     product_id = request.data['product']
-    cart = get_object_or_404(Cart, owner=request.user)
+    cart = get_object_or_404(Cart, user=request.user)
     product = get_object_or_404(Product, id=product_id)
 
     for p in cart.products:
@@ -112,8 +112,9 @@ def add_product_to_cart(request):
 @authentication_classes([JWTTokenUserAuthentication])
 def update_cart_product(request, pk):
     cart_product = get_object_or_404(CartProduct, id=pk)
+    cart = get_object_or_404(Cart, user=request.user)
 
-    if cart_product.owner.id != request.user.id:
+    if cart_product in cart.products:
         return Response({'detail': 'Access denied'}, 401)
 
     serializer = CartProductSerializer(cart_product, data=request.data)
@@ -128,8 +129,9 @@ def update_cart_product(request, pk):
 @authentication_classes([JWTTokenUserAuthentication])
 def remove_cart_product(request, pk):
     cart_product = get_object_or_404(CartProduct, id=pk)
+    cart = get_object_or_404(Cart, user=request.user)
 
-    if cart_product.owner.id != request.user.id:
+    if cart_product in cart.products:
         return Response({'detail': 'Access denied'}, 401)
 
     cart_product.delete()

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
+from shop.models import Cart
+
 NEW_USER_BONUS_BALANCE = 10
 
 
@@ -36,6 +38,8 @@ class User(AbstractBaseUser):
     balance = models.PositiveIntegerField('balance', default=0)
     bonus_balance = models.PositiveIntegerField(
         'bonus balance', default=0)
+    cart = models.OneToOneField(
+        Cart, on_delete=models.SET_NULL, null=True, auto_created=True)
     date_joined = models.DateTimeField('join date', auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
