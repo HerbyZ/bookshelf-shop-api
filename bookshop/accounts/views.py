@@ -14,14 +14,15 @@ from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 @permission_classes([AllowAny])
 def register_view(request: Request):
     user_data = request.data
-    serializer = UserSerializer(data=user_data)
 
     try:
         User.objects.get(email=user_data['email'])
         return Response({'detail': 'User with specified email already exists'})
     except User.DoesNotExist:
-        if serializer.is_valid():
-            serializer.save()
+        user = User.objects.create_user(
+            user_data['email'], user_data['password'])
+
+        serializer = UserSerializer(user)
 
         return Response(serializer.data, 201)
 
