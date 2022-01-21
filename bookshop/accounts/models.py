@@ -1,4 +1,3 @@
-from email.policy import default
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
@@ -34,6 +33,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField('email', max_length=255, unique=True)
+    balance = models.PositiveIntegerField('balance', default=0)
     bonus_balance = models.PositiveIntegerField(
         'bonus balance', default=0)
     date_joined = models.DateTimeField('join date', auto_now_add=True)
