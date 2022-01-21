@@ -1,31 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
 from accounts.models import User
+from catalog.models import Product
 
-from .serializers import BookSerializer, OrderSerializer
-from .models import Book, Order, OrderStatus, Product
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def book_list(request):
-    books = Book.objects.order_by('-appear_date')
-    serializer = BookSerializer(books, many=True)
-
-    return Response(serializer.data, 200)
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def book_retrieve(request, pk):
-    book = get_object_or_404(Book, id=pk)
-    serializer = BookSerializer(book)
-
-    return Response(serializer.data, 200)
+from .serializers import OrderSerializer
+from .models import Order, OrderStatus
 
 
 @api_view(['GET'])
