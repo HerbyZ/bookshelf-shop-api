@@ -7,5 +7,7 @@ urlpatterns = [
     path('books/<int:pk>', views.book_retrieve, name='retrieve book'),
     path('order', views.create_order, name='create order'),
     path('order/pay', views.pay_order, name='pay order'),
-    path('order/<int:pk>', views.change_order_address, name='change order address'),
+    path('order/<int:pk>', views.change_order_address,
+         name='change order address'),
+    path('orders/<int:pk>', views.get_orders_for_user, name='get user orders'),
 ]
