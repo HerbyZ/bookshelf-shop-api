@@ -16,11 +16,15 @@ def register_view(request: Request):
     user_data = request.data
 
     try:
+        email, password = user_data['email'], user_data['password']
+    except KeyError:
+        return Response({'detail': 'No register data provided'}, 400)
+
+    try:
         User.objects.get(email=user_data['email'])
         return Response({'detail': 'User with specified email already exists'})
     except User.DoesNotExist:
-        user = User.objects.create_user(
-            user_data['email'], user_data['password'])
+        user = User.objects.create_user(email, password)
 
         serializer = UserSerializer(user)
 
